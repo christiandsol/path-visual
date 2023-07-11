@@ -1,0 +1,11 @@
+.grid {
+  display: flex;
+  justify-content: center;
+  align-items: last baseline;
+  height: 100vh;
+  flex-wrap: wrap;
+}
+
+.row {
+  display: flex;
+}
