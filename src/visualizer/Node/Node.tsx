@@ -26,14 +26,19 @@ export const Node: React.FC<Props> = (props: Props) => {
   return (
     <div
       id={`${row}-${column}`}
-      className="node"
-      onMouseDown={() => {
+      className={
+        "node " +
+        (isWall ? " dark " : " light ") +
+        (isStart ? " start-node " : "") +
+        (isEnd ? " end-node " : "")
+      }
+      onMouseDown={function () {
         onMouseDown(row, column);
       }}
-      onMouseUp={() => {
+      onMouseUp={function () {
         onMouseUp(row, column);
       }}
-      onMouseEnter={() => {
+      onMouseEnter={function () {
         onMouseEnter(row, column);
       }}
     ></div>
