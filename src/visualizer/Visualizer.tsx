@@ -5,6 +5,9 @@ import { NavBar } from "../Components/NavBar";
 import "./Visualizer.css";
 import { astar } from "../Algorithms/A*";
 import { greedyBestFirstSearch } from "../Algorithms/greedy";
+import { swarmSearch } from "../Algorithms/Swarm";
+import { depthFirstSearch } from "../Algorithms/depth";
+import { breadthFirstSearch } from "../Algorithms/breadth";
 interface Props {
   startRow: number;
   startCol: number;
@@ -113,6 +116,40 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
       setGrid(newGrid);
     }
   };
+  //Algorithms
+  type functionType = (
+    grid: GridNode[][],
+    startNode: GridNode,
+    endNode: GridNode
+  ) => GridNode[];
+  const visualize = (algorithm: functionType) => {
+    const start = grid[startNode[0]][startNode[1]];
+    const end = grid[endNode[0]][endNode[1]];
+    const visitedNodes = algorithm(grid, start, end);
+  };
+
+  //animation
+  const animateAlgo = (
+    visitedNodes: GridNode[],
+    number: number,
+    path: GridNode[]
+  ) => {
+    for (let i = 0; i < visitedNodes.length; i++) {
+      setTimeout(() => {
+        const node = visitedNodes[i];
+        const element = document.getElementById(`${node.row}-${node.column}`);
+        if (element) {
+          element.className = " node node-visited";
+        }
+      }, number * i);
+    }
+
+    const delay = number * visitedNodes.length;
+    setTimeout(() => {
+      animateShortestPath(path);
+    }, delay);
+  };
+
   //Dijkstra
 
   const visualizeDijkstra = () => {
@@ -191,7 +228,83 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
       animateShortestPath(path);
     }, delay);
   };
+  //Swarm
+  const visualizeSwarm = () => {
+    const start = grid[startNode[0]][startNode[1]];
+    const end = grid[endNode[0]][endNode[1]];
+    const visitedNodes: GridNode[] = swarmSearch(grid, start, end);
+    const path = getShortestPath(end);
+    animateSwarm(path, visitedNodes);
+  };
 
+  const animateSwarm = (path: GridNode[], visitedNodes: GridNode[]) => {
+    for (let i = 0; i < visitedNodes.length; i++) {
+      setTimeout(() => {
+        const node = visitedNodes[i];
+        const element = document.getElementById(`${node.row}-${node.column}`);
+        if (element) {
+          element.className = " node node-visited";
+        }
+      }, 10 * i);
+    }
+
+    let delay = 10 * visitedNodes.length;
+    setTimeout(() => {
+      animateShortestPath(path);
+    }, delay);
+  };
+
+  //Depth
+  const visualizeDepth = () => {
+    const start = grid[startNode[0]][startNode[1]];
+    const end = grid[endNode[0]][endNode[1]];
+    const visitedNodes: GridNode[] = depthFirstSearch(grid, start, end);
+    const path = getShortestPath(end);
+    animateDepth(path, visitedNodes);
+  };
+
+  const animateDepth = (path: GridNode[], visitedNodes: GridNode[]) => {
+    for (let i = 0; i < visitedNodes.length; i++) {
+      setTimeout(() => {
+        const node = visitedNodes[i];
+        const element = document.getElementById(`${node.row}-${node.column}`);
+        if (element) {
+          element.className = " node node-visited";
+        }
+      }, 10 * i);
+    }
+
+    let delay = 10 * visitedNodes.length;
+    setTimeout(() => {
+      animateShortestPath(path);
+    }, delay);
+  };
+  //breadth:
+  const visualizeBreadth = () => {
+    const start = grid[startNode[0]][startNode[1]];
+    const end = grid[endNode[0]][endNode[1]];
+    const visitedNodes: GridNode[] = breadthFirstSearch(grid, start, end);
+    const path = getShortestPath(end);
+    animateBreadth(path, visitedNodes);
+  };
+
+  const animateBreadth = (path: GridNode[], visitedNodes: GridNode[]) => {
+    for (let i = 0; i < visitedNodes.length; i++) {
+      setTimeout(() => {
+        const node = visitedNodes[i];
+        const element = document.getElementById(`${node.row}-${node.column}`);
+        if (element) {
+          element.className = " node node-visited";
+        }
+      }, 4 * i);
+    }
+
+    let delay = 4 * visitedNodes.length;
+    setTimeout(() => {
+      animateShortestPath(path);
+    }, delay);
+  };
+  //animation
   const animateShortestPath = (path: GridNode[]) => {
     for (let node = 0; node < path.length; node++) {
       const element = document.getElementById(
@@ -240,6 +353,9 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
         visualizeDijkstra={visualizeDijkstra}
         visualizeAStar={visualizeAStar}
         visualizeGreedy={visualizeGreedy}
+        visualizeSwarm={visualizeSwarm}
+        visualizeDepth={visualizeDepth}
+        visualizeBreadth={visualizeBreadth}
       />{" "}
       <div className="grid">
         {grid.map((row, rowIndex) => (

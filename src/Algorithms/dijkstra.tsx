@@ -64,12 +64,23 @@ export function getUnvisitedNeighbors(node: GridNode, grid: GridNode[][]) {
   return neighbors.filter((neighbor) => !neighbor.isVisited);
 }
 
+// export const getShortestPath = (lastNode: GridNode | null) => {
+//   const nodesInShortestPathOrder = [];
+//   let currentNode = lastNode;
+//   while (currentNode !== null) {
+//     nodesInShortestPathOrder.unshift(currentNode);
+//     currentNode = currentNode.prev;
+//   }
+//   return nodesInShortestPathOrder;
+// };
 export const getShortestPath = (lastNode: GridNode | null) => {
   const nodesInShortestPathOrder = [];
   let currentNode = lastNode;
+
   while (currentNode !== null) {
     nodesInShortestPathOrder.unshift(currentNode);
     currentNode = currentNode.prev;
   }
+
   return nodesInShortestPathOrder;
 };

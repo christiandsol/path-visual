@@ -52,7 +52,7 @@ export const astar = (
   return visitedNodes;
 };
 //[Node]
-const getLowestFScoreNode = (openSet: GridNode[]) => {
+export const getLowestFScoreNode = (openSet: GridNode[]) => {
   let lowestNode = openSet[0];
   for (let i = 1; i < openSet.length; i++) {
     if (openSet[i].fScore < lowestNode.fScore) {
@@ -73,7 +73,7 @@ export const calculateHeuristic = (nodeA: GridNode, nodeB: GridNode) => {
   return dx + dy;
 };
 
-const getNeighbors = (node: GridNode, grid: GridNode[][]) => {
+export const getNeighbors = (node: GridNode, grid: GridNode[][]) => {
   const neighbors: GridNode[] = [];
   const { row, column } = node;
 

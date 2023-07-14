@@ -32,22 +32,6 @@ export const greedyBestFirstSearch = (
   return visitedNodes;
 };
 
-// const getClosestToTarget = (openSet: GridNode[], finishNode: GridNode) => {
-//   let closestNode = openSet[0];
-//   let closestDistance = calculateHeuristic(closestNode, finishNode);
-
-//   for (let i = 1; i < openSet.length; i++) {
-//     const node = openSet[i];
-//     const distance = calculateHeuristic(node, finishNode);
-//     if (distance < closestDistance) {
-//       closestNode = node;
-//       closestDistance = distance;
-//     }
-//   }
-
-//   return closestNode;
-// };
-
 const getClosestToTarget = (openSet: GridNode[], finishNode: GridNode) => {
   let closestNode = openSet[0];
   let closestDistance = calculateHeuristic(closestNode, finishNode);
