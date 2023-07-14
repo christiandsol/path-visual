@@ -122,11 +122,20 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
     startNode: GridNode,
     endNode: GridNode
   ) => GridNode[];
-  const visualize = (algorithm: functionType) => {
+  const visualize = (algorithm: functionType, number: number) => {
     const start = grid[startNode[0]][startNode[1]];
     const end = grid[endNode[0]][endNode[1]];
     const visitedNodes = algorithm(grid, start, end);
+    const path = getShortestPath(end);
+    animateAlgo(visitedNodes, number, path);
   };
+
+  //Dijkstra:2
+  //A* : 10
+  //Greedy: 4
+  //swarm: 10
+  //depth: 10
+  //breadth: 4
 
   //animation
   const animateAlgo = (
@@ -350,12 +359,13 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
   return (
     <React.Fragment>
       <NavBar
-        visualizeDijkstra={visualizeDijkstra}
-        visualizeAStar={visualizeAStar}
-        visualizeGreedy={visualizeGreedy}
-        visualizeSwarm={visualizeSwarm}
-        visualizeDepth={visualizeDepth}
-        visualizeBreadth={visualizeBreadth}
+        visualize={visualize}
+        // visualizeDijkstra={visualizeDijkstra}
+        // visualizeAStar={visualizeAStar}
+        // visualizeGreedy={visualizeGreedy}
+        // visualizeSwarm={visualizeSwarm}
+        // visualizeDepth={visualizeDepth}
+        // visualizeBreadth={visualizeBreadth}
       />{" "}
       <div className="grid">
         {grid.map((row, rowIndex) => (
