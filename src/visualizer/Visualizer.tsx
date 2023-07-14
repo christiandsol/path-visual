@@ -1,7 +1,8 @@
 import { Node } from "./Node/Node";
 import React, { useState } from "react";
 import { dijkstra, getShortestPath } from "../Algorithms/dijkstra";
-
+import { NavBar } from "../Components/NavBar";
+import "./Visualizer.css";
 interface Props {
   startRow: number;
   startCol: number;
@@ -22,7 +23,9 @@ export type GridNode = {
 
 export const Visualizer: React.FC<Props> = (props: Props) => {
   const [startNode, setStartNode] = useState([props.startRow, props.startCol]);
+  const [endNode, setEndNode] = useState([props.endRow, props.endCol]);
   const [startNodeMoving, setStartNodeMoving] = useState(false);
+  const [endNodeMoving, setEndNodeMoving] = useState(false);
   const [mouseIsPressed, setMousePressed] = useState(false);
 
   const createNode = (row: number, column: number) => {
@@ -33,7 +36,7 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
       isWall: false,
       distance: Infinity,
       isStart: row === startNode[0] && column === startNode[1] ? true : false,
-      isEnd: row === props.endRow && column === props.endCol ? true : false,
+      isEnd: row === endNode[0] && column === endNode[1] ? true : false,
       prev: null,
     };
   };
@@ -56,6 +59,9 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
     if (startNodeMoving) {
       setStartNode([row, column]);
       setStartNodeMoving(false);
+    } else if (endNodeMoving) {
+      setEndNode([row, column]);
+      setEndNodeMoving(false);
     } else {
       setMousePressed(false);
     }
@@ -64,6 +70,8 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
   const handleMouseDown = (row: number, column: number) => {
     if (grid[row][column].isStart === true) {
       setStartNodeMoving(true);
+    } else if (grid[row][column].isEnd === true) {
+      setEndNodeMoving(true);
     } else {
       setMousePressed(true);
       const newGrid = changeWall(grid, row, column);
@@ -73,12 +81,23 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
 
   const handleMouseEnter = (row: number, column: number) => {
     if (startNodeMoving) {
-      const newGrid = changeStartNode(
+      const newGrid = changeNodePosition(
         grid,
         row,
         column,
         startNode[0],
-        startNode[1]
+        startNode[1],
+        "start"
+      );
+      setGrid(newGrid);
+    } else if (endNodeMoving) {
+      const newGrid = changeNodePosition(
+        grid,
+        row,
+        column,
+        endNode[0],
+        endNode[1],
+        "end"
       );
       setGrid(newGrid);
     } else if (mouseIsPressed) {
@@ -89,7 +108,7 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
 
   const visualizeDijkstra = () => {
     const start = grid[startNode[0]][startNode[1]];
-    const end = grid[props.endRow][props.endCol];
+    const end = grid[endNode[0]][endNode[1]];
 
     const visitedNodes = dijkstra(grid, start, end);
     const path = getShortestPath(end);
@@ -126,33 +145,38 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
     }
   };
 
-  const changeStartNode = (
+  const changeNodePosition = (
     grid: GridNode[][],
     row: number,
     column: number,
     pastRow: number,
-    pastColumn: number
+    pastColumn: number,
+    nodeType: "start" | "end"
   ) => {
     const newGrid = [...grid];
     const node = newGrid[row][column];
-    const oldStartNode = newGrid[pastRow][pastColumn];
-    const newOldStartNode = {
-      ...oldStartNode,
-      isStart: false,
+    const oldNode = newGrid[pastRow][pastColumn];
+    const newOldNode = {
+      ...oldNode,
+      [nodeType === "start" ? "isStart" : "isEnd"]: false,
     };
     const newNode = {
       ...node,
-      isStart: true,
+      [nodeType === "start" ? "isStart" : "isEnd"]: true,
     };
     newGrid[row][column] = newNode;
-    newGrid[pastRow][pastColumn] = newOldStartNode;
-    setStartNode([row, column]);
+    newGrid[pastRow][pastColumn] = newOldNode;
+    if (nodeType === "start") {
+      setStartNode([row, column]);
+    } else {
+      setEndNode([row, column]);
+    }
     return newGrid;
   };
 
   return (
     <React.Fragment>
-      <button onClick={visualizeDijkstra}>Click to Visualize</button>
+      <NavBar visualizeDijkstra={visualizeDijkstra} />{" "}
       <div className="grid">
         {grid.map((row, rowIndex) => (
           <div key={rowIndex}>
@@ -187,7 +211,6 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
     </React.Fragment>
   );
 };
-
 const changeWall = (grid: GridNode[][], row: number, column: number) => {
   const newGrid = [...grid];
   const node = newGrid[row][column];
