@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { dijkstra, getShortestPath } from "../Algorithms/dijkstra";
 import { NavBar } from "../Components/NavBar";
 import "./Visualizer.css";
+import { astar } from "../Algorithms/A*";
+import { greedyBestFirstSearch } from "../Algorithms/greedy";
 interface Props {
   startRow: number;
   startCol: number;
@@ -19,6 +21,9 @@ export type GridNode = {
   isStart: boolean;
   isEnd: boolean;
   prev: null | GridNode;
+  fScore: number;
+  gScore: number;
+  hScore: number;
 };
 
 export const Visualizer: React.FC<Props> = (props: Props) => {
@@ -38,6 +43,9 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
       isStart: row === startNode[0] && column === startNode[1] ? true : false,
       isEnd: row === endNode[0] && column === endNode[1] ? true : false,
       prev: null,
+      fScore: Infinity,
+      gScore: Infinity,
+      hScore: Infinity,
     };
   };
 
@@ -105,6 +113,7 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
       setGrid(newGrid);
     }
   };
+  //Dijkstra
 
   const visualizeDijkstra = () => {
     const start = grid[startNode[0]][startNode[1]];
@@ -127,6 +136,57 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
     }
 
     const delay = 2 * visitedNodes.length;
+    setTimeout(() => {
+      animateShortestPath(path);
+    }, delay);
+  };
+  //A*
+  const visualizeAStar = () => {
+    const start = grid[startNode[0]][startNode[1]];
+    const end = grid[endNode[0]][endNode[1]];
+    const visitedNodes: GridNode[] = astar(grid, start, end);
+    const path = getShortestPath(end);
+    animateAStar(path, visitedNodes);
+  };
+
+  const animateAStar = (path: GridNode[], visitedNodes: GridNode[]) => {
+    for (let i = 0; i < visitedNodes.length; i++) {
+      setTimeout(() => {
+        const node = visitedNodes[i];
+        const element = document.getElementById(`${node.row}-${node.column}`);
+        if (element) {
+          element.className = " node node-visited";
+        }
+      }, 10 * i);
+    }
+
+    const delay = 10 * visitedNodes.length;
+    setTimeout(() => {
+      animateShortestPath(path);
+    }, delay);
+  };
+
+  //Greedy
+  const visualizeGreedy = () => {
+    const start = grid[startNode[0]][startNode[1]];
+    const end = grid[endNode[0]][endNode[1]];
+    const visitedNodes: GridNode[] = greedyBestFirstSearch(grid, start, end);
+    const path = getShortestPath(end);
+    animateGreedy(path, visitedNodes);
+  };
+
+  const animateGreedy = (path: GridNode[], visitedNodes: GridNode[]) => {
+    for (let i = 0; i < visitedNodes.length; i++) {
+      setTimeout(() => {
+        const node = visitedNodes[i];
+        const element = document.getElementById(`${node.row}-${node.column}`);
+        if (element) {
+          element.className = " node node-visited";
+        }
+      }, 4 * i);
+    }
+
+    let delay = 4 * visitedNodes.length;
     setTimeout(() => {
       animateShortestPath(path);
     }, delay);
@@ -176,7 +236,11 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
 
   return (
     <React.Fragment>
-      <NavBar visualizeDijkstra={visualizeDijkstra} />{" "}
+      <NavBar
+        visualizeDijkstra={visualizeDijkstra}
+        visualizeAStar={visualizeAStar}
+        visualizeGreedy={visualizeGreedy}
+      />{" "}
       <div className="grid">
         {grid.map((row, rowIndex) => (
           <div key={rowIndex}>
