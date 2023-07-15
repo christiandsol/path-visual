@@ -1,13 +1,9 @@
 import { Node } from "./Node/Node";
 import React, { useState } from "react";
-import { dijkstra, getShortestPath } from "../Algorithms/dijkstra";
+import { getShortestPath } from "../Algorithms/dijkstra";
 import { NavBar } from "../Components/NavBar";
+import { recursiveDivision } from "../Algorithms/RecursiveDivision";
 import "./Visualizer.css";
-import { astar } from "../Algorithms/A*";
-import { greedyBestFirstSearch } from "../Algorithms/greedy";
-import { swarmSearch } from "../Algorithms/Swarm";
-import { depthFirstSearch } from "../Algorithms/depth";
-import { breadthFirstSearch } from "../Algorithms/breadth";
 interface Props {
   startRow: number;
   startCol: number;
@@ -129,15 +125,26 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
     const path = getShortestPath(end);
     animateAlgo(visitedNodes, number, path);
   };
-
-  //Dijkstra:2
-  //A* : 10
-  //Greedy: 4
-  //swarm: 10
-  //depth: 10
-  //breadth: 4
-
+  //Maze:
+  const visualizeMaze = () => {
+    const start = grid[startNode[0]][startNode[1]];
+    const end = grid[endNode[0]][endNode[1]];
+    const walls = recursiveDivision(grid, start, end);
+    animateWall(walls);
+  };
   //animation
+
+  const animateWall = (nodes: GridNode[]) => {
+    for (let i = 0; i < nodes.length; i++) {
+      setTimeout(() => {
+        const node = nodes[i];
+        const element = document.getElementById(`${node.row}-${node.column}`);
+        if (element) {
+          element.className = " node dark";
+        }
+      }, 2 * i);
+    }
+  };
   const animateAlgo = (
     visitedNodes: GridNode[],
     number: number,
@@ -154,161 +161,6 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
     }
 
     const delay = number * visitedNodes.length;
-    setTimeout(() => {
-      animateShortestPath(path);
-    }, delay);
-  };
-
-  //Dijkstra
-
-  const visualizeDijkstra = () => {
-    const start = grid[startNode[0]][startNode[1]];
-    const end = grid[endNode[0]][endNode[1]];
-
-    const visitedNodes = dijkstra(grid, start, end);
-    const path = getShortestPath(end);
-    animateDijkstra(visitedNodes, path);
-  };
-
-  const animateDijkstra = (visitedNodes: GridNode[], path: GridNode[]) => {
-    for (let i = 0; i < visitedNodes.length; i++) {
-      setTimeout(() => {
-        const node = visitedNodes[i];
-        const element = document.getElementById(`${node.row}-${node.column}`);
-        if (element) {
-          element.className = " node node-visited";
-        }
-      }, 2 * i);
-    }
-
-    const delay = 2 * visitedNodes.length;
-    setTimeout(() => {
-      animateShortestPath(path);
-    }, delay);
-  };
-  //A*
-  const visualizeAStar = () => {
-    const start = grid[startNode[0]][startNode[1]];
-    const end = grid[endNode[0]][endNode[1]];
-    const visitedNodes: GridNode[] = astar(grid, start, end);
-    const path = getShortestPath(end);
-    animateAStar(path, visitedNodes);
-  };
-
-  const animateAStar = (path: GridNode[], visitedNodes: GridNode[]) => {
-    for (let i = 0; i < visitedNodes.length; i++) {
-      setTimeout(() => {
-        const node = visitedNodes[i];
-        const element = document.getElementById(`${node.row}-${node.column}`);
-        if (element) {
-          element.className = " node node-visited";
-        }
-      }, 10 * i);
-    }
-
-    const delay = 10 * visitedNodes.length;
-    setTimeout(() => {
-      animateShortestPath(path);
-    }, delay);
-  };
-
-  //Greedy
-  const visualizeGreedy = () => {
-    const start = grid[startNode[0]][startNode[1]];
-    const end = grid[endNode[0]][endNode[1]];
-    const visitedNodes: GridNode[] = greedyBestFirstSearch(grid, start, end);
-    const path = getShortestPath(end);
-    animateGreedy(path, visitedNodes);
-  };
-
-  const animateGreedy = (path: GridNode[], visitedNodes: GridNode[]) => {
-    for (let i = 0; i < visitedNodes.length; i++) {
-      setTimeout(() => {
-        const node = visitedNodes[i];
-        const element = document.getElementById(`${node.row}-${node.column}`);
-        if (element) {
-          element.className = " node node-visited";
-        }
-      }, 4 * i);
-    }
-
-    let delay = 4 * visitedNodes.length;
-    setTimeout(() => {
-      animateShortestPath(path);
-    }, delay);
-  };
-  //Swarm
-  const visualizeSwarm = () => {
-    const start = grid[startNode[0]][startNode[1]];
-    const end = grid[endNode[0]][endNode[1]];
-    const visitedNodes: GridNode[] = swarmSearch(grid, start, end);
-    const path = getShortestPath(end);
-    animateSwarm(path, visitedNodes);
-  };
-
-  const animateSwarm = (path: GridNode[], visitedNodes: GridNode[]) => {
-    for (let i = 0; i < visitedNodes.length; i++) {
-      setTimeout(() => {
-        const node = visitedNodes[i];
-        const element = document.getElementById(`${node.row}-${node.column}`);
-        if (element) {
-          element.className = " node node-visited";
-        }
-      }, 10 * i);
-    }
-
-    let delay = 10 * visitedNodes.length;
-    setTimeout(() => {
-      animateShortestPath(path);
-    }, delay);
-  };
-
-  //Depth
-  const visualizeDepth = () => {
-    const start = grid[startNode[0]][startNode[1]];
-    const end = grid[endNode[0]][endNode[1]];
-    const visitedNodes: GridNode[] = depthFirstSearch(grid, start, end);
-    const path = getShortestPath(end);
-    animateDepth(path, visitedNodes);
-  };
-
-  const animateDepth = (path: GridNode[], visitedNodes: GridNode[]) => {
-    for (let i = 0; i < visitedNodes.length; i++) {
-      setTimeout(() => {
-        const node = visitedNodes[i];
-        const element = document.getElementById(`${node.row}-${node.column}`);
-        if (element) {
-          element.className = " node node-visited";
-        }
-      }, 10 * i);
-    }
-
-    let delay = 10 * visitedNodes.length;
-    setTimeout(() => {
-      animateShortestPath(path);
-    }, delay);
-  };
-  //breadth:
-  const visualizeBreadth = () => {
-    const start = grid[startNode[0]][startNode[1]];
-    const end = grid[endNode[0]][endNode[1]];
-    const visitedNodes: GridNode[] = breadthFirstSearch(grid, start, end);
-    const path = getShortestPath(end);
-    animateBreadth(path, visitedNodes);
-  };
-
-  const animateBreadth = (path: GridNode[], visitedNodes: GridNode[]) => {
-    for (let i = 0; i < visitedNodes.length; i++) {
-      setTimeout(() => {
-        const node = visitedNodes[i];
-        const element = document.getElementById(`${node.row}-${node.column}`);
-        if (element) {
-          element.className = " node node-visited";
-        }
-      }, 4 * i);
-    }
-
-    let delay = 4 * visitedNodes.length;
     setTimeout(() => {
       animateShortestPath(path);
     }, delay);
@@ -358,15 +210,7 @@ export const Visualizer: React.FC<Props> = (props: Props) => {
 
   return (
     <React.Fragment>
-      <NavBar
-        visualize={visualize}
-        // visualizeDijkstra={visualizeDijkstra}
-        // visualizeAStar={visualizeAStar}
-        // visualizeGreedy={visualizeGreedy}
-        // visualizeSwarm={visualizeSwarm}
-        // visualizeDepth={visualizeDepth}
-        // visualizeBreadth={visualizeBreadth}
-      />{" "}
+      <NavBar visualize={visualize} visualizeMaze={visualizeMaze} />{" "}
       <div className="grid">
         {grid.map((row, rowIndex) => (
           <div key={rowIndex}>

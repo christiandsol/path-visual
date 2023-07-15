@@ -7,7 +7,6 @@ import { astar } from "../Algorithms/A*";
 import { greedyBestFirstSearch } from "../Algorithms/greedy";
 import { depthFirstSearch } from "../Algorithms/depth";
 import { breadthFirstSearch } from "../Algorithms/breadth";
-
 type FunctionType = (
   grid: GridNode[][],
   startNode: GridNode,
@@ -16,9 +15,10 @@ type FunctionType = (
 
 interface Props {
   visualize: (algorithm: FunctionType, number: number) => void;
+  visualizeMaze: () => void;
 }
 
-export const NavBar: React.FC<Props> = ({ visualize }) => {
+export const NavBar: React.FC<Props> = ({ visualize, visualizeMaze }) => {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<string>("");
 
   const handleAlgorithmChange = (
@@ -42,9 +42,9 @@ export const NavBar: React.FC<Props> = ({ visualize }) => {
       visualize(selectedAlgorithmFunction, number);
     }
   };
-
   return (
-    <div className="container">
+    <div className="navbar-container">
+      <h2>Path-finding Visualizer</h2>
       <select className="item" onChange={handleAlgorithmChange}>
         <option value="">Select an algorithm</option>
         <option value="Swarm">Swarm</option>
@@ -54,9 +54,34 @@ export const NavBar: React.FC<Props> = ({ visualize }) => {
         <option value="Depth">Depth</option>
         <option value="Breadth">Breadth</option>
       </select>
-      <button className="item" onClick={() => handleVisualizeClick(10)}>
+      <button
+        className="item nav-button"
+        onClick={() => handleVisualizeClick(5)}
+      >
         Visualize
+      </button>
+      <button className="item nav-button" onClick={visualizeMaze}>
+        Make Maze
       </button>
     </div>
   );
+  // return (
+  //   <div className="container">
+  //     <select className="item" onChange={handleAlgorithmChange}>
+  // <option value="">Select an algorithm</option>
+  // <option value="Swarm">Swarm</option>
+  // <option value="Dijkstra">Dijkstra</option>
+  // <option value="AStar">A Star</option>
+  // <option value="Greedy">Greedy</option>
+  // <option value="Depth">Depth</option>
+  // <option value="Breadth">Breadth</option>
+  //     </select>
+  //     <button className="item" onClick={visualizeMaze}>
+  //       Make Maze
+  //     </button>
+  //     <button className="item" onClick={() => handleVisualizeClick(5)}>
+  //       Visualize
+  //     </button>
+  //   </div>
+  // );
 };

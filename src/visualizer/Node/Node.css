@@ -5,9 +5,9 @@
   display: inline-block;
 }
 
-.dark {
+/* .dark {
   background-color: rgb(11, 37, 60);
-}
+} */
 
 .start-node {
   /* background-image: url("https://cdn-icons-png.flaticon.com/512/2380/2380928.png"); */
@@ -81,5 +81,33 @@
   100% {
     transform: scale(1);
     background-color: rgba(0, 190, 218, 0.75);
+  }
+}
+
+.dark {
+  animation-name: darken;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+
+@keyframes darken {
+  0% {
+    transform: scale(0.6);
+    background-color: rgb(12, 53, 71);
+  }
+
+  50% {
+    transform: scale(1.2);
+    background-color: rgb(12, 53, 71);
+  }
+
+  100% {
+    transform: scale(1);
+    background-color: rgb(12, 53, 71);
   }
 }
